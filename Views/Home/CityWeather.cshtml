@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Weather_App.Models.Weather>
+
+@{
+    ViewData["Title"] = "City Weather";
+}
+
+<h1>City Weather</h1>
+
+<form asp-action="CityWeather" method="post">
+    <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" class="form-control" id="city" name="city" required />
+    </div>
+    <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <input type="date" class="form-control" id="startDate" name="startDate" required />
+    </div>
+    <div class="form-group">
+        <label for="endDate">End Date</label>
+        <input type="date" class="form-control" id="endDate" name="endDate" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Date</th>
+                <th>Temperature</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.City</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Temperature</td>
+                    <td>@item.State</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No data found.</p>
+}

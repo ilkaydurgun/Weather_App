@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Weather_App.Models.Weather>
+
+<h2>Weather Results</h2>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temperature</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Temperature</td>
+                    <td>@item.State</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No weather data found.</p>
+}

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Weather_App.Models.Weather>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Weather App</h1>
+    <p>Latest weather information from the database:</p>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Date</th>
+                <th>Temperature</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.City</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Temperature</td> <!-- Temperature yazımını kontrol edin -->
+                    <td>@item.State</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No weather data available.</p>
+}
