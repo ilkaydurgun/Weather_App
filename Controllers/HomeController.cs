@@ -1,58 +1,77 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Weather_App.Models;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Weather_App.Context;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System;
 
 namespace Weather_App.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;  // Veritabaný baðlamý (DbContext)
+        private readonly string _apiKey = "0fe12a9337bb8b7c15bee01ae9bcca92"; // OpenWeatherMap API anahtarý
 
-        // Constructor - DbContext injection
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _context = context;  // Veritabaný baðlamý initialize edilir
-        }
-        [HttpGet]
-        public IActionResult CityWeather()
-        {
-            return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CityWeather(string city, DateTime startDate, DateTime endDate)
+        // GET: /Home/CityWeather
+        public async Task<IActionResult> CityWeather()
         {
-            if (string.IsNullOrEmpty(city) || startDate == default || endDate == default)
+            // Sabit þehir listesi
+            var cities = new List<string> { "Istanbul", "Ankara", "Izmir", "Bursa", "Gaziantep" };
+
+            var weatherDataList = new List<Weather>();
+
+            // Her þehir için hava durumu verisini API'den al
+            foreach (var cityName in cities)
             {
-                return BadRequest("Please provide valid city name and dates.");
+                var weatherData = await GetWeatherFromApi(cityName);
+                if (weatherData != null)
+                {
+                    var weather = new Weather
+                    {
+                        City = weatherData.name,
+                        Date = DateTime.Now,
+                        Temperature = (int)weatherData.main.temp,
+                        State = weatherData.weather[0].description
+                    };
+
+                    weatherDataList.Add(weather);
+                }
             }
 
-            var weatherData = await _context.WeatherApps
-                .Where(w => w.City == city && w.Date >= startDate && w.Date <= endDate)
-                .ToListAsync();
-
-            if (weatherData == null || weatherData.Count == 0)
-            {
-                return View(new List<Weather_App.Models.Weather>()); // Return an empty list
-            }
-
-            return View(weatherData);
+            // Þehirlerin hava durumu verilerini View'e gönder
+            return View("WeatherResults", weatherDataList);
         }
-        // Index action - Veritabanýndan verileri çekip view'e gönderir
-        public async Task<IActionResult> Index()
-        {
-            // Veritabanýndaki WeatherApp tablosundaki tüm verileri çekiyoruz
-            var weatherData = await _context.WeatherApps.ToListAsync();
 
-            // Verileri View'e (Index.cshtml) gönderiyoruz
-            return View(weatherData);
+        // Hava durumu API'den veri çekme
+        private async Task<dynamic> GetWeatherFromApi(string city)
+        {
+            using (var client = new HttpClient())
+            {
+                var url = $"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={_apiKey}&units=metric";
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<dynamic>(jsonResponse); // Dinamik veri olarak çözümle
+                }
+
+                return null; // Eðer API baþarýsýzsa null dön
+            }
+        }
+
+  
+        public IActionResult Index()
+        {
+            return RedirectToAction("CityWeather"); // Ana sayfaya yönlendir
         }
 
         public IActionResult Privacy()
@@ -63,7 +82,7 @@ namespace Weather_App.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

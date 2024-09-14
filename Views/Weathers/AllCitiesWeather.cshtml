@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Weather_App.Models.Weather>
+
+@{
+    ViewData["Title"] = "All Cities Weather";
+}
+
+<h1>All Cities Weather</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Date</th>
+                <th>Temperature</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.City</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.Temperature</td>
+                    <td>@item.State</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No data found for the cities.</p>
+}

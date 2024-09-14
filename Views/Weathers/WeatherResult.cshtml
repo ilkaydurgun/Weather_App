@@ -1,30 +1,45 @@
 ﻿@model IEnumerable<Weather_App.Models.Weather>
 
-<h2>Weather Results</h2>
+@{
+    ViewData["Title"] = "Filtered Weather Data";
+}
 
-@if (Model != null && Model.Any())
-{
-    <table class="table">
-        <thead>
+<h1>Filtrelenmiş Hava Verileri</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Temperature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.State)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
             <tr>
-                <th>Date</th>
-                <th>Temperature</th>
-                <th>State</th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Temperature)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State)
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Date.ToShortDateString()</td>
-                    <td>@item.Temperature</td>
-                    <td>@item.State</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No weather data found.</p>
-}
+        }
+    </tbody>
+</table>

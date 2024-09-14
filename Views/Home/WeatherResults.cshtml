@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Weather_App.Models.Weather>
+
+<h1>Weather App</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>City</th>
+                <th>Date</th>
+                <th>Temperature (°C)</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.City</td>
+                    <td>@item.Date.ToString("HH:mm, dd MMM yyyy")</td>
+                    <td>@item.Temperature</td>
+                    <td>@item.State</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No weather data found for the selected cities.</p>
+}
