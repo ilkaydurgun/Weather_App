@@ -10,6 +10,7 @@ namespace Weather_App.Context
         {
         }
 
+        // Weather_App is assumed to be a model class. Make sure it's defined correctly.
         public DbSet<Weather> WeatherApps { get; set; }
     }
 }

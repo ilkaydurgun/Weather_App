@@ -71,7 +71,6 @@ namespace Weather_App.Controllers
   
         public IActionResult Index()
         {
-            return RedirectToAction("CityWeather"); // Ana sayfaya yönlendir
         }
 
         public IActionResult Privacy()
@@ -82,7 +81,6 @@ namespace Weather_App.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View();
         }
     }
 }
